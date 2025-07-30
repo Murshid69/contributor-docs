@@ -14,9 +14,9 @@ A well-written description:
 
 As you are filling out the description, use these questions as a guide:
 
-- **What is the context behind your changes?** Remember that your reviewers might not know everything you know. Set the stage: what sort of domain-specific information can you share with them so that they can evaluate your changes more easily? (Linking to a ticket is better than nothing, but prefer to summarize the context as best you can in order to save your reviewers valuable time.)
+- **What is the context behind your changes?** Remember that your reviewers might not know everything you know. Set the stage: what sort of domain-specific information can you share with them so that they can evaluate your changes more easily? (Linking to an issue is better than nothing, but prefer to summarize the context as best you can in order to save your reviewers valuable time.)
 - **What is the purpose of your changes?** What is insufficient about the way things work now? What's the user story?
-- **What is your solution?** How do your changes satisfy the need? Are there any changes in particular whose purpose might not be obvious or whose implementation might be difficult to decipher? How do they work?
+- **What is your solution?** How do your changes satisfy the need? Are there any changes in particular whose purpose might not be obvious or whose implementation might be difficult to decipher? How do they work? If you made UI changes, are there any screenshots or videos you can provide to illustrate the solution?
 
 In the majority of cases, these questions can be answered in as little as one or two paragraphs.
 
@@ -28,6 +28,8 @@ Here are some examples of pull request descriptions that satisfy the criteria ab
 - <https://github.com/MetaMask/metamask-extension/pull/18629>
 - <https://github.com/MetaMask/metamask-mobile/pull/6677>
 - <https://github.com/MetaMask/snaps/pull/1708>
+- <https://github.com/MetaMask/metamask-extension/pull/21370>
+- <https://github.com/MetaMask/metamask-mobile/pull/9450>
 
 > [!NOTE]\
 > The same guidelines above apply just as well to Git commit messages as they do to pull request descriptions. In fact, if you create a pull request from a branch with only one commit, GitHub will copy your commit message into the pull request description. This means that if you focus on writing a good commit message _before_ you push up your branch, when you go to create your pull request, you're done — you don't have to spend any extra time filling out the pull request description. As a bonus, your commit will thereafter be visible in Git rather than GitHub, saving future code spelunkers time.
@@ -48,9 +50,11 @@ If there are specific changes within your pull request that you'd like to call y
 
 ### Create smaller pull requests
 
-Large pull requests are extremely painful to review. They also need to be kept up to date more frequently since they have a higher chance of creating conflicts that need to be resolved.
+Large pull requests are extremely painful to review. They also need to be kept up to date more frequently since they have a higher chance of creating conflicts that need to be resolved, and they make the commit history more difficult to understand after they are merged.
 
-Ideally, a ticket should be broken down into small pieces ahead of time so to prevent so many changes from appearing in a single pull request. If, despite this effort, a pull request grows in size, then it should be broken down into logical stages.
+Creating small pull requests starts with creating small issues; break your tasks up into smaller pieces ahead of time whenever possible, to prevent pull requests from growing in size in the first place. If a single task still requires many changes, plan out (or prototype) the code changes that are required, and consider how they can be decomposed into separate changes before marking them as ready for review.
+
+The goal should be for each pull request to be focused around a single purpose. If you find yourself using the word "and" in the pull request title or description, that's a hint that it might be possible to split it up further.
 
 ## On reviewing pull requests
 
@@ -139,14 +143,25 @@ If you sense that a conversation between you and the author is proceeding in an 
 
 If you need to take over and merge someone else's branch, let them know so they aren't surprised.
 
-### Rebase sparingly
+### Rebase with caution
 
-Once you've created a pull request, avoid amending, rebasing, or otherwise altering the history of the branch, but push up each new change as a new commit instead. This has two advantages:
+Once you've started receiving comments on a new pull request, avoid amending, rebasing, or otherwise altering the history of the branch, but push up each new change as a new commit instead. This has a few advantages:
 
-1. It keeps reviewers in the loop as changes are made. Keep in mind that they won't check your pull request as often as you will. If you've made a bunch of updates in response to feedback and now need a second round of reviews, then your reviewers can look over the list of most recent commits to catch up.
-2. It creates a smooth workflow with collaborators. If you're working with someone else but you change the history of the branch, they may have to now blow away their version of the branch and re-fetch it. This creates friction, causes frustration, and wastes time.
+1. **It preserves the order of timeline activity in the Conversation view, helping reviewers follow pull requests over time.**
 
-Make sure that when you click the button on GitHub to update a branch with its base branch, you do not choose the "rebase" option.
+   Reviewers tend to visit and revisit your pull request in multiple rounds over time. The timeline on the Conversation view of a pull request is an essential tool for reviewers to catch up on changes that have occurred since they've been away.
+
+   Typically, this timeline lists conversations and commits in the order that they occurred originally. Rebasing, however, lifts all commits from their surrounding conversations and moves them to the very end. This can cause confusion for reviewers and makes it more difficult for them to locate new commits (as all of them now look new).
+
+   That said, there are some cases where editing the commit history can help reviewers with their task. In such cases, consider rebasing on a previous commit to minimize the range of commits that are affected. Preferably, this commit should come after or close to the last conversation entry in the timeline view. This approach should be much less disruptive compared to rebasing on the base branch and altering the context of the entire timeline history.
+
+2. **It ensures that active conversations aren't marked as outdated.**
+
+   Since rebasing re-creates existing commits, it can confuse GitHub into thinking that a commit which is connected to a conversation is now outdated. This is misleading and can cause those conversations to be ignored by all parties involved.
+
+3. **It creates a smoother workflow for co-authors.**
+
+   Since rebasing rewrites the history of a branch, someone else working on the same branch may receive an error from Git when attempting to pull the latest changes, and they may be forced to reset their branch to unblock future development. Not everyone may be familiar with this workflow, and this can lead to frustration.
 
 If you absolutely have to change the history of a pull request's branch, inform your reviewers and/or collaborators appropriately.
 

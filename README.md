@@ -6,10 +6,18 @@ This is a living repository — nothing is set in stone! If you're member of Met
 
 ## Table of Contents
 
+- [Contributor Code of Conduct](https://github.com/MetaMask/.github/blob/main/CODE_OF_CONDUCT.md)
 - [Engineering Principles](./docs/engineering-principles.md)
-- [Guide to Pull Requests](./docs/pull-requests.md)
 - [JavaScript Guidelines](./docs/javascript.md)
-- [Secure Development Lifecycle Policy](./docs/sdlc.md)
+- [Migrations Best Practices](./docs/migrations-guidelines.md)
+- [Performance Tracing Guidelines](./docs/performance-tracing.md)
+- [Pull Requests Guide](./docs/pull-requests.md)
+- [React Guidelines](./docs/react.md)
+- [Redux Guidelines](./docs/redux.md)
 - [Secure Coding Guidelines](./docs/secure-coding-guidelines.md)
+- [Secure Development Lifecycle Policy](./docs/sdlc.md)
+- [Testing Guidelines](./docs/testing/overview.md)
+  - [Unit Testing Guidelines](./docs/testing/unit-testing.md)
+  - [UI Integration Testing Guidelines](./docs/testing/ui-integration-testing.md)
+  - [E2E Testing Guidelines](./docs/testing/e2e-testing.md)
 - [TypeScript Guidelines](./docs/typescript.md)
-- [Unit Testing Guidelines](./docs/unit-testing.md)

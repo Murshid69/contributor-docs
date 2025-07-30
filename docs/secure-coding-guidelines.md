@@ -30,6 +30,9 @@ The guidelines in this policy were gathered primarily from the [OWASP Top 10](ht
     - If a non-negative number is expected, do not allow the value to be negative
   - Check that the format matches expectations
     - If we expect a 0x-prefixed hexadecimal string, ensure that the 0x is present
+  - When validating objects coming from untrusted programs, get rid of all dynamic behaviors (getters) from the input by serializing and deserializing it
+    - Most data from external sources in our applications is received via RPC, so it has already been serialized and deserialized, eliminating this risk. We handle data from external sources directly in some places though, like in the Snaps runtime.
+    - An example of malicious dynamic behavior would be a getter on a field that returns the expected value on the first call and a malicious value on the second call.
 
 - Encode data before output
 
@@ -131,23 +134,36 @@ The guidelines in this policy were gathered primarily from the [OWASP Top 10](ht
 #### Audit and Monitor Dependencies
 
 - Monitor dependencies for security vulnerabilities and other problems
-  - Periodically scan for security vulnerabilities (e.g. using tools like `npm audit`)
+  - Periodically scan for security vulnerabilities (e.g. using tools like `npm audit`, Dependabot, and Socket.dev)
   - Update dependencies quickly when they have security vulnerabilities
   - Use Socket.dev to monitor dependencies for other noteworthy changes, such as maintainer changes, or the addition of install scripts or binary files
     - Use the following etiquette when addressing Socket.dev warnings:
       - Investigate and address all warnings before merging a PR
       - Avoid using the `ignore-all` bot command, instead ignoring each warning one at a time
-      - If you've investigated a warning and found that it's not indicative of a malicious dependency, ignore it with a bot comment and explain your investigation with a short comment
+      - If you've investigated a warning and found that it's not indicative of a malicious dependency, ignore it with a bot comment and explain your investigation with a short comment. For example:
+        - For the "Network access" warning, verify that the package is supposed to have network access then leave a comment explaining your investigation.
+        - For the "New author" warning, leave a comment saying "Known maintainer" if you know the author. Otherwise, try to verify that they are the legitimate maintainers, and look for other suspicious changes in the versions they published (and review any LavaMoat policy changes, if your project uses LavaMoat)
       - Contact the security team if you're unsure how to investigate something, or if you'd like to disable a warning category
 
 #### LavaMoat (JavaScript projects only)
 
-- LavaMoat `allow-scripts` should be enabled on all projects
-  - This project relies upon install scripts being disabled in your package manager. This can be verified by adding the dependency `@lavamoat/preinstall-always-fail`, which will cause installation to fail if scripts are enabled.
-  - `allow-scripts` acts as an allowlist for install scripts. Use the `allow-scripts` binary after installing dependencies to run install scripts on the allowlist.
-    - On Yarn v3 projects, use the `yarn-plugin-allow-scripts` plugin to run allowed scripts automatically during install
-    - On other projects, use an npm script called `setup` that will call `install` and `allow-scripts` in sequence
-  - If you're unsure whether an install script is needed, leave it disabled
+- LavaMoat `allow-scripts` should be enabled on all projects. This project uses an allowlist to run trusted install scripts, ensuring new or untrusted scripts are never run unexpectedly.
+
+  This project relies upon install scripts being disabled in your package manager. Install scripts should be run explicitly via `allow-scripts` instead, which uses the allowlist configured in `package.json`.
+
+  See [the `allow-scripts` README](https://github.com/LavaMoat/LavaMoat/tree/main/packages/allow-scripts) for setup and configuration instructions.
+
+  After setup and configuration, ensure that `allow-scripts` is run every time you install dependencies as part of your development workflow. There are two approaches to this:
+
+  - On Yarn Modern projects, use [the `yarn-plugin-allow-scripts` plugin](https://github.com/LavaMoat/LavaMoat/tree/main/packages/yarn-plugin-allow-scripts) to run allowed scripts automatically during install
+  - On other projects, use an npm script called `setup` that will call `install` and `allow-scripts` in sequence
+
+  Each time a dependency is added or updated, run `yarn allow-scripts auto` to detect new install scripts. They should be added to the configuration automatically, disabled by default. Review each one, only enabling those that are necessary.
+
+  - Review the package contents and the source code for the script. Try to get a sense for what it does.
+  - Review the Socket.dev page for the package (you can find it at `socket.dev/npm/package/[package name]`). Review the package warnings.
+  - If you notice anything suspicious about the script or the package (e.g. if the maintainer has recently changed, if there is unexplained network or shell access, or if the script appears to be obfuscated), consult with the security team before enabling it.
+
 - LavaMoat runtime should be used for all Node.js build systems, and LavaMoat bundling tools should be used for all JavaScript client applications
   - The LavaMoat runtime helps protect against malicious code in dependencies by isolating dependencies and reducing their capabilities
   - The LavaMoat bundling tools will bundle client applications with a LavaMoat runtime and policy
