@@ -1,26 +1,48 @@
-# MetaMask Contributor Documentation
+# Yarn
 
-Welcome! Here you can find the principles, policies, and practices which are followed by MetaMask engineers in building MetaMask. These resources are designed to enable all builders, whether internal or external, in making meaningful contributions to any part of the MetaMask ecosystem.
+Install Yarn
 
-This is a living repository — nothing is set in stone! If you're member of MetaMask and are interested in making updates to this repository, make sure to consult the [Contributing](./CONTRIBUTING.md) guide.
+    brew install yarn
 
-## Table of Contents
+Switch yarn to specific version / latest version (yarn 1.x)
 
-- [Contributor Code of Conduct](https://github.com/MetaMask/.github/blob/main/CODE_OF_CONDUCT.md)
-- [Engineering Principles](./docs/engineering-principles.md)
-- [JavaScript Guidelines](./docs/javascript.md)
-- [Migrations Best Practices](./docs/migrations-guidelines.md)
-- [Performance Alert Guidelines](./docs/performance-alert.md)
-- [Performance Dashboard Guidelines](./docs/performance-dashboard.md)
-- [Performance Tracing Guidelines](./docs/performance-tracing.md)
-- [Pull Requests Guide](./docs/pull-requests.md)
-- [React Guidelines](./docs/react.md)
-- [Redux Guidelines](./docs/redux.md)
-- [Remote Feature Flags](./docs/remote-feature-flags.md)
-- [Secure Coding Guidelines](./docs/secure-coding-guidelines.md)
-- [Secure Development Lifecycle Policy](./docs/sdlc.md)
-- [Testing Guidelines](./docs/testing/overview.md)
-  - [Unit Testing Guidelines](./docs/testing/unit-testing.md)
-  - [UI Integration Testing Guidelines](./docs/testing/ui-integration-testing.md)
-  - [E2E Testing Guidelines](./docs/testing/e2e-testing.md)
-- [TypeScript Guidelines](./docs/typescript.md)
+    yarn policies set-version <version>
+    yarn policies set-version
+
+Switch yarn to specific version / latest version (yarn 2.x)
+
+    yarn set version <version>
+    yarn set version latest
+
+## Information
+
+Show yarn version and help
+
+    yarn -v
+    yarn help
+
+Show information for a package
+
+    yarn info <package>
+
+Show why a package was installed
+
+    yarn why <package>
+
+## List
+
+List installed packages (local / global)
+
+    yarn list
+    yarn global list
+
+List only top level global packages
+
+    yarn list --depth=0
+    yarn global list --depth=0
+
+List packages that match pattern
+
+    yarn list --pattern <string>
+
+## Init
